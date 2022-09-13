@@ -583,6 +583,7 @@ type formatChart struct {
 		ShowPercent     bool `json:"show_percent"`
 		ShowSerName     bool `json:"show_series_name"`
 		ShowVal         bool `json:"show_val"`
+		TextLumOff      int  `json:"text_lum_off" default:"85000"`
 		Gradient        struct {
 			Colors []string `json:"colors"`
 		} `json:"gradient"`
@@ -616,9 +617,10 @@ type formatChartLegend struct {
 
 // formatChartSeries directly maps the format settings of the chart series.
 type formatChartSeries struct {
-	Name       string `json:"name"`
-	Categories string `json:"categories"`
-	Values     string `json:"values"`
+	Name       string   `json:"name"`
+	Categories string   `json:"categories"`
+	Values     string   `json:"values"`
+	Colors     []string `json:"colors"`
 	Line       struct {
 		None   bool    `json:"none"`
 		Color  string  `json:"color"`

@@ -1,4 +1,4 @@
-// Copyright 2016 - 2022 The excelize Authors. All rights reserved. Use of
+// Copyright 2016 - 2022 The excelize Authors. All rights reserved. Use
 // this source code is governed by a BSD-style license that can be found in
 // the LICENSE file.
 //
@@ -768,6 +768,14 @@ func (f *File) drawChartSeries(formatSet *formatChart) *[]cSer {
 // drawChartSeriesSpPr provides a function to draw the c:spPr element by given
 // format sets.
 func (f *File) drawChartSeriesSpPr(i int, formatSet *formatChart) *cSpPr {
+	var spPr *cSpPr
+	if len(formatSet.Series[i].Colors) > 0 {
+		spPr = &cSpPr{
+			SolidFill: &aSolidFill{
+				SrgbClr: &attrValString{Val: &formatSet.Series[i].Colors[0]},
+			},
+		}
+	}
 	spPrScatter := &cSpPr{
 		Ln: &aLn{
 			W:      25400,
@@ -783,35 +791,56 @@ func (f *File) drawChartSeriesSpPr(i int, formatSet *formatChart) *cSpPr {
 			},
 		},
 	}
-	chartSeriesSpPr := map[string]*cSpPr{Line: spPrLine, Scatter: spPrScatter}
+	chartSeriesSpPr := map[string]*cSpPr{Line: spPrLine, Scatter: spPrScatter, BarStacked: spPr, ColStacked: spPr}
 	return chartSeriesSpPr[formatSet.Type]
 }
 
 // drawChartSeriesDPt provides a function to draw the c:dPt element by given
 // data index and format sets.
 func (f *File) drawChartSeriesDPt(i int, formatSet *formatChart) []*cDPt {
-	dpt := []*cDPt{{
-		IDx:      &attrValInt{Val: intPtr(i)},
-		Bubble3D: &attrValBool{Val: boolPtr(false)},
-		SpPr: &cSpPr{
-			SolidFill: &aSolidFill{
-				SchemeClr: &aSchemeClr{Val: "accent" + strconv.Itoa(i+1)},
-			},
-			Ln: &aLn{
-				W:   25400,
-				Cap: "rnd",
-				SolidFill: &aSolidFill{
-					SchemeClr: &aSchemeClr{Val: "lt" + strconv.Itoa(i+1)},
-				},
-			},
-			Sp3D: &aSp3D{
-				ContourW: 25400,
-				ContourClr: &aContourClr{
-					SchemeClr: &aSchemeClr{Val: "lt" + strconv.Itoa(i+1)},
-				},
-			},
+	var dpt []*cDPt
+	ln := &aLn{
+		W:   25400,
+		Cap: "rnd",
+		SolidFill: &aSolidFill{
+			SchemeClr: &aSchemeClr{Val: "lt" + strconv.Itoa(i+1)},
 		},
-	}}
+	}
+	sp3D := &aSp3D{
+		ContourW: 25400,
+		ContourClr: &aContourClr{
+			SchemeClr: &aSchemeClr{Val: "lt" + strconv.Itoa(i+1)},
+		},
+	}
+	if len(formatSet.Series[i].Colors) > 0 {
+		for k := range formatSet.Series[i].Colors {
+			dpt = append(dpt, &cDPt{
+				IDx:      &attrValInt{Val: intPtr(k)},
+				Bubble3D: &attrValBool{Val: boolPtr(false)},
+				SpPr: &cSpPr{
+					SolidFill: &aSolidFill{
+						SrgbClr: &attrValString{Val: &formatSet.Series[i].Colors[k]},
+					},
+					Ln:   ln,
+					Sp3D: sp3D,
+				},
+			})
+		}
+	} else {
+		dpt = []*cDPt{
+			{
+				IDx:      &attrValInt{Val: intPtr(i)},
+				Bubble3D: &attrValBool{Val: boolPtr(false)},
+				SpPr: &cSpPr{
+					SolidFill: &aSolidFill{
+						SchemeClr: &aSchemeClr{Val: "accent" + strconv.Itoa(i+1)},
+					},
+					Ln:   ln,
+					Sp3D: sp3D,
+				},
+			},
+		}
+	}
 	chartSeriesDPt := map[string][]*cDPt{Pie: dpt, Pie3D: dpt}
 	return chartSeriesDPt[formatSet.Type]
 }
@@ -982,7 +1011,7 @@ func (f *File) drawPlotAreaCatAx(formatSet *formatChart) []*cAxs {
 			MinorTickMark: &attrValString{Val: stringPtr("none")},
 			TickLblPos:    &attrValString{Val: stringPtr("nextTo")},
 			SpPr:          f.drawPlotAreaSpPr(),
-			TxPr:          f.drawPlotAreaTxPr(),
+			TxPr:          f.drawPlotAreaTxPr(formatSet),
 			CrossAx:       &attrValInt{Val: intPtr(753999904)},
 			Crosses:       &attrValString{Val: stringPtr("autoZero")},
 			Auto:          &attrValBool{Val: boolPtr(true)},
@@ -1036,7 +1065,7 @@ func (f *File) drawPlotAreaValAx(formatSet *formatChart) []*cAxs {
 			MinorTickMark: &attrValString{Val: stringPtr("none")},
 			TickLblPos:    &attrValString{Val: stringPtr("nextTo")},
 			SpPr:          f.drawPlotAreaSpPr(),
-			TxPr:          f.drawPlotAreaTxPr(),
+			TxPr:          f.drawPlotAreaTxPr(formatSet),
 			CrossAx:       &attrValInt{Val: intPtr(754001152)},
 			Crosses:       &attrValString{Val: stringPtr("autoZero")},
 			CrossBetween:  &attrValString{Val: stringPtr(chartValAxCrossBetween[formatSet.Type])},
@@ -1079,7 +1108,7 @@ func (f *File) drawPlotAreaSerAx(formatSet *formatChart) []*cAxs {
 			AxPos:      &attrValString{Val: stringPtr(catAxPos[formatSet.XAxis.ReverseOrder])},
 			TickLblPos: &attrValString{Val: stringPtr("nextTo")},
 			SpPr:       f.drawPlotAreaSpPr(),
-			TxPr:       f.drawPlotAreaTxPr(),
+			TxPr:       f.drawPlotAreaTxPr(formatSet),
 			CrossAx:    &attrValInt{Val: intPtr(753999904)},
 		},
 	}
@@ -1105,7 +1134,7 @@ func (f *File) drawPlotAreaSpPr() *cSpPr {
 }
 
 // drawPlotAreaTxPr provides a function to draw the c:txPr element.
-func (f *File) drawPlotAreaTxPr() *cTxPr {
+func (f *File) drawPlotAreaTxPr(formatSet *formatChart) *cTxPr {
 	return &cTxPr{
 		BodyPr: aBodyPr{
 			Rot:              -60000000,
@@ -1130,7 +1159,7 @@ func (f *File) drawPlotAreaTxPr() *cTxPr {
 						SchemeClr: &aSchemeClr{
 							Val:    "tx1",
 							LumMod: &attrValInt{Val: intPtr(15000)},
-							LumOff: &attrValInt{Val: intPtr(85000)},
+							LumOff: &attrValInt{Val: intPtr(formatSet.Plotarea.TextLumOff)},
 						},
 					},
 					Latin: &aLatin{Typeface: "+mn-lt"},
