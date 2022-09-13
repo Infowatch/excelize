@@ -1,4 +1,4 @@
-module github.com/Infowatch/excelize
+module github.com/Infowatch/excelize/v2
 
 go 1.18
 
