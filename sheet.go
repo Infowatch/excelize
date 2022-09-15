@@ -1201,9 +1201,6 @@ func trimSheetName(name string) string {
 			default:
 				r = append(r, v)
 			}
-			if len(r) == 31 {
-				break
-			}
 		}
 		name = string(r)
 	}
