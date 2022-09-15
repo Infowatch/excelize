@@ -28,7 +28,6 @@ import (
 	"strconv"
 	"strings"
 	"unicode/utf16"
-	"unicode/utf8"
 
 	"github.com/mohae/deepcopy"
 )
@@ -1192,8 +1191,8 @@ func (f *File) UnprotectSheet(sheet string, password ...string) error {
 // trimSheetName provides a function to trim invalid characters by given worksheet
 // name.
 func trimSheetName(name string) string {
-	if strings.ContainsAny(name, ":\\/?*[]") || utf8.RuneCountInString(name) > 31 {
-		r := make([]rune, 0, 31)
+	if strings.ContainsAny(name, ":\\/?*[]") {
+		r := make([]rune, 0, len(name))
 		for _, v := range name {
 			switch v {
 			case 58, 92, 47, 63, 42, 91, 93: // replace :\/?*[]
