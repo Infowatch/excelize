@@ -1191,14 +1191,17 @@ func (f *File) UnprotectSheet(sheet string, password ...string) error {
 // trimSheetName provides a function to trim invalid characters by given worksheet
 // name.
 func trimSheetName(name string) string {
-	if strings.ContainsAny(name, ":\\/?*[]") {
-		r := make([]rune, 0, len(name))
+	if strings.ContainsAny(name, ":\\/?*[]") || utf8.RuneCountInString(name) > 31 {
+		r := make([]rune, 0, 31)
 		for _, v := range name {
 			switch v {
 			case 58, 92, 47, 63, 42, 91, 93: // replace :\/?*[]
 				continue
 			default:
 				r = append(r, v)
+			}
+			if len(r) == 31 {
+				break
 			}
 		}
 		name = string(r)
