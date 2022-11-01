@@ -28,6 +28,7 @@ import (
 	"strconv"
 	"strings"
 	"unicode/utf16"
+	"unicode/utf8"
 
 	"github.com/mohae/deepcopy"
 )
