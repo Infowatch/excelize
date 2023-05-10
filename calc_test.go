@@ -3515,6 +3515,7 @@ func TestCalcCellValue(t *testing.T) {
 		// YEARFRAC
 		"=YEARFRAC()":                 "YEARFRAC requires 3 or 4 arguments",
 		"=YEARFRAC(42005,42094,5)":    "invalid basis",
+		"=YEARFRAC(42001,42000,1)":    "startDate is greater than endDate",
 		"=YEARFRAC(\"\",42094,5)":     "#VALUE!",
 		"=YEARFRAC(42005,\"\",5)":     "#VALUE!",
 		"=YEARFRAC(42005,42094,\"\")": "strconv.ParseFloat: parsing \"\": invalid syntax",
@@ -3800,6 +3801,7 @@ func TestCalcCellValue(t *testing.T) {
 		"=ACCRINT(\"01/01/2012\",\"04/01/2012\",\"12/31/2013\",8%,10000,\"\",1,FALSE)": "#NUM!",
 		"=ACCRINT(\"01/01/2012\",\"04/01/2012\",\"12/31/2013\",8%,10000,4,\"\",FALSE)": "#NUM!",
 		"=ACCRINT(\"01/01/2012\",\"04/01/2012\",\"12/31/2013\",8%,10000,4,1,\"\")":     "#VALUE!",
+		"=ACCRINT(\"01/01/2015\",\"01/01/2014\",\"12/31/2013\",8%,10000,4,1,FALSE)":    "startDate is greater than endDate",
 		"=ACCRINT(\"01/01/2012\",\"04/01/2012\",\"12/31/2013\",8%,10000,4,5,FALSE)":    "invalid basis",
 		// ACCRINTM
 		"=ACCRINTM()": "ACCRINTM requires 4 or 5 arguments",
@@ -4165,6 +4167,7 @@ func TestCalcCellValue(t *testing.T) {
 		"=RECEIVED(\"04/01/2011\",\"03/31/2016\",1000,\"\",1)":    "strconv.ParseFloat: parsing \"\": invalid syntax",
 		"=RECEIVED(\"04/01/2011\",\"03/31/2016\",1000,4.5%,\"\")": "#NUM!",
 		"=RECEIVED(\"04/01/2011\",\"03/31/2016\",1000,0)":         "RECEIVED requires discount > 0",
+		"=RECEIVED(\"02/01/2016\",\"01/01/2016\",1000,4.5%,1)":    "startDate is greater than endDate",
 		"=RECEIVED(\"04/01/2011\",\"03/31/2016\",1000,4.5%,5)":    "invalid basis",
 		// RRI
 		"=RRI()":               "RRI requires 3 arguments",
