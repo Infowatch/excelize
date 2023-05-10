@@ -6971,6 +6971,9 @@ func (fn *formulaFuncs) CHITEST(argsList *list.List) formulaArg {
 	actual, expected := argsList.Front().Value.(formulaArg), argsList.Back().Value.(formulaArg)
 	actualList, expectedList := actual.ToList(), expected.ToList()
 	rows := len(actual.Matrix)
+	if rows == 0 {
+		newErrorFormulaArg(formulaErrorVALUE, "matrix is empty")
+	}
 	columns := len(actualList) / rows
 	if len(actualList) != len(expectedList) || len(actualList) == 1 {
 		return newErrorFormulaArg(formulaErrorNA, formulaErrorNA)
@@ -12795,6 +12798,9 @@ func yearFracBasis4(startDate, endDate float64) (dayDiff, daysInYear float64) {
 
 // yearFrac is an implementation of the formula function YEARFRAC.
 func yearFrac(startDate, endDate float64, basis int) formulaArg {
+	if startDate > endDate {
+		return newErrorFormulaArg(formulaErrorNUM, "startDate is greater than endDate")
+	}
 	startTime, endTime := timeFromExcelTime(startDate, false), timeFromExcelTime(endDate, false)
 	if startTime == endTime {
 		return newNumberFormulaArg(0)
