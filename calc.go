@@ -6972,7 +6972,7 @@ func (fn *formulaFuncs) CHITEST(argsList *list.List) formulaArg {
 	actualList, expectedList := actual.ToList(), expected.ToList()
 	rows := len(actual.Matrix)
 	if rows == 0 {
-		newErrorFormulaArg(formulaErrorVALUE, "matrix is empty")
+		return newErrorFormulaArg(formulaErrorVALUE, "matrix is empty")
 	}
 	columns := len(actualList) / rows
 	if len(actualList) != len(expectedList) || len(actualList) == 1 {
