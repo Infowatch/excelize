@@ -7460,14 +7460,14 @@ func (fn *formulaFuncs) covar(name string, argsList *list.List) formulaArg {
 		if n - skip == 1 {
 			return newErrorFormulaArg(formulaErrorNA, formulaErrorNA)
 		}
-		
+
 		return newNumberFormulaArg(result / float64(n-skip-1))
 	}
 
 	if skip == n {
 		return newErrorFormulaArg(formulaErrorNA, formulaErrorNA)
 	}
-	
+
 	return newNumberFormulaArg(result / float64(n-skip))
 }
 
