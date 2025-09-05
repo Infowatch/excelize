@@ -7,7 +7,7 @@ require (
 	github.com/richardlehane/mscfb v1.0.4
 	github.com/stretchr/testify v1.7.1
 	github.com/xuri/efp v0.0.0-20220603152613-6918739fd470
-	github.com/xuri/nfp v0.0.0-20220409054826-5e722a1d9e22
+	github.com/xuri/nfp v0.0.1
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90
 	golang.org/x/image v0.0.0-20220413100746-70e8d0d3baa9
 	golang.org/x/net v0.0.0-20220826154423-83b083e8dc8b
